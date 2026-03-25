@@ -1,7 +1,7 @@
 {
   "appId": "com.supercircuito.app",
   "appName": "Super CircuitoApp",
-  "webDir": "www",
+  "webDir": ".",
   "android": {
     "allowMixedContent": true,
     "backgroundColor": "#000000"
