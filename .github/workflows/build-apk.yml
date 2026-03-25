@@ -1,61 +1,48 @@
-name: Build APK — Super CircuitoApp
+name: Build APK
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [ "main" ]
 
 jobs:
- build-apk:
+  build:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: 📥 Descargar código
+      - name: Checkout del código
         uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: Instalar dependencias
         run: npm install
 
-      - name: ☕ Configurar Java 17
+      - name: Preparar carpeta web (Fix)
+        run: |
+          mkdir -p www
+          cp index.html www/
+          # Si tienes más archivos como imágenes o CSS, se copiarían aquí
+
+      - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
+          distribution: 'zulu'
           java-version: '17'
-          distribution: 'temurin'
 
-      - name: 🟢 Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: 📦 Instalar dependencias de Node
-        run: npm install
-
-      - name: 🤖 Agregar plataforma Android
-        run: npx cap add android
-
-      - name: 🔄 Sincronizar Capacitor
+      - name: Sincronizar Capacitor
         run: npx cap sync android
 
-      - name: 🔑 Dar permisos a Gradle
+      - name: Dar permisos a Gradle
         run: chmod +x android/gradlew
 
-      - name: 🏗️ Compilar APK debug
-        run: |
-          cd android
-          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Compilar APK (Debug)
+        run: cd android && ./gradlew assembleDebug
 
-      - name: 📤 Subir APK como artefacto
+      - name: Subir APK como artefacto
         uses: actions/upload-artifact@v4
         with:
-          name: SuperCircuitoApp-debug
+          name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
-
-      - name: ✅ Resumen
-        run: |
-          echo "============================================"
-          echo "✅ APK generada exitosamente"
-          echo "📱 Optimizada para Galaxy S24 Ultra y Tab S8+"
-          echo "📥 Descárgala desde la pestaña 'Artifacts'"
-          echo "============================================"
