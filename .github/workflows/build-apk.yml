@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-build-apk:
-      runs-on: ubuntu-latest
+ build-apk:
+    runs-on: ubuntu-latest
     
     steps:
       - name: 📥 Descargar código
